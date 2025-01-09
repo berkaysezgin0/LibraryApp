@@ -17,21 +17,21 @@ namespace MVC.Controllers
         private readonly IService _genreService;
 
         /* Can be uncommented and used for many to many relationships. {Entity} may be replaced with the related entiy name in the controller and views. */
-        //private readonly IService<{Entity}, {Entity}Model> _{Entity}Service;
+        private readonly IService<Author, AuthorModel> _authorService;
 
         public BooksController(
 			IBookService bookService
             , IService  genreService
 
             /* Can be uncommented and used for many to many relationships. {Entity} may be replaced with the related entiy name in the controller and views. */
-            //, Service<{Entity}, {Entity}Model> {Entity}Service
+            , IService<Author, AuthorModel> authorService
         )
         {
             _bookService = bookService;
             _genreService = genreService;
 
             /* Can be uncommented and used for many to many relationships. {Entity} may be replaced with the related entiy name in the controller and views. */
-            //_{Entity}Service = {Entity}Service;
+            _authorService = authorService;
         }
 
         // GET: Books
@@ -53,10 +53,10 @@ namespace MVC.Controllers
         protected void SetViewData()
         {
             // Related items service logic to set ViewData (Record.Id and Name parameters may need to be changed in the SelectList constructor according to the model):
-            ViewData["GenreID"] = new SelectList(_genreService.Query().ToList(), "Record.Id", "Name");
+            ViewData["GenreID"] = new SelectList(_genreService.Query().ToList(), "Record.ID", "Name");
             
             /* Can be uncommented and used for many to many relationships. {Entity} may be replaced with the related entiy name in the controller and views. */
-            //ViewBag.{Entity}Ids = new MultiSelectList(_{Entity}Service.Query().ToList(), "Record.Id", "Name");
+            ViewBag.AuthorIDs = new MultiSelectList(_authorService.Query().ToList(), "Record.ID", "NameAndSurname");
         }
 
         // GET: Books/Create

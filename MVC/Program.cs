@@ -1,17 +1,25 @@
 using BLL.DAL;
 using BLL.Services;
+using BLL.Models;
 using Microsoft.EntityFrameworkCore;
+using BLL.Services.Bases;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+//AppSettings
+var appSettingsSection = builder.Configuration.GetSection(nameof(AppSettings));
+appSettingsSection.Bind(new AppSettings());
+
 //IoC Container:
-var connectionString = "server=(localdb)\\mssqllocaldb;database=LibraryAppDb;trusted_connection=true;";
+var connectionString = builder.Configuration.GetConnectionString("Db");
 builder.Services.AddDbContext<Db>(options => options.UseSqlServer(connectionString));
 builder.Services.AddScoped<IService, GenresService>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IService<Author, AuthorModel>, AuthorService>();
+builder.Services.AddScoped<IService<User, UserModel>, UserService>();
 
 var app = builder.Build();
 

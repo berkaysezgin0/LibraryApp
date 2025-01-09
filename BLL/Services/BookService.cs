@@ -1,6 +1,7 @@
 ﻿using BLL.DAL;
 using BLL.Models;
 using BLL.Services.Bases;
+using Microsoft.EntityFrameworkCore;
 
 namespace BLL.Services
 {
@@ -40,7 +41,8 @@ namespace BLL.Services
 
         public IQueryable<BookModel> Query()
         {
-            return _db.Book.OrderByDescending(b => b.PublicationYear).ThenByDescending(b => b.IsAvailable).ThenBy(b => b.Name).
+            //Include(b=>b.Genres)
+            return _db.Book.Include(b=>b.BookAuthor).ThenInclude(ba=>ba.Author).OrderByDescending(b => b.PublicationYear).ThenByDescending(b => b.IsAvailable).ThenBy(b => b.Name).
                  Select(b => new BookModel() { Record = b });
         }
 
@@ -48,8 +50,17 @@ namespace BLL.Services
         {
             if (_db.Book.Any(b => b.ID != record.ID && b.Name.ToLower() == record.Name.ToLower().Trim() && b.PublicationYear == record.PublicationYear))
                 return Error("Book with the same name, publication year exists!");
-            record.Name = record.Name?.Trim();
-            _db.Update(record);
+            var entity = _db.Book.Include(b=>b.BookAuthor).SingleOrDefault(b => b.ID == record.ID);
+            if (entity is null)
+                return Error("Book not found!");
+            _db.BookAuthor.RemoveRange(entity.BookAuthor);
+            entity.Name = record.Name?.Trim();
+            entity.IsAvailable = record.IsAvailable;
+            entity.PublicationYear = record.PublicationYear;
+            entity.ISBN = record.ISBN;
+            entity.GenreID = record.GenreID;
+            entity.BookAuthor = record.BookAuthor;
+            _db.Update(entity);
             _db.SaveChanges();
             return Success("Book updated.");
         }

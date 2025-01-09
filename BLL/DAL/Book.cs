@@ -21,6 +21,6 @@ namespace BLL.DAL
 
         public int GenreID { get; set; }
         public Genres Genre { get; set; }
-
+        public List<BookAuthor> BookAuthor {  get; set; }=new List<BookAuthor>();
     }
 }

@@ -18,6 +18,7 @@ namespace BLL.DAL
 
         public int NumberofWork { get; set; }
 
-        public List<Book> Book { get; set; } = new List<Book>();
+        //public List<Book> Book { get; set; } = new List<Book>();
+        public List<BookAuthor> BookAuthor { get; set; } = new List<BookAuthor>();
     }
 }
