@@ -27,7 +27,7 @@ namespace MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userModel=_userService.Query().SingleOrDefault(u => u.UserName == user.Record.UserName && u.Password == user.Record.Password && u.Record.IsActive);
+                var userModel=_userService.Query().SingleOrDefault(u => u.Record.UserName == user.Record.UserName && u.Record.Password == user.Record.Password && u.Record.IsActive);
                 if(userModel == null)
                 {
                     List<Claim> claims = new List<Claim>()
@@ -47,6 +47,12 @@ namespace MVC.Controllers
             }
             return View(); 
 
+        }
+
+        public async Task<IActionResult>Logout()
+        { 
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index","Home");
         }
     }
 }

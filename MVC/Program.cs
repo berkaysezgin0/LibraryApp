@@ -3,6 +3,7 @@ using BLL.Services;
 using BLL.Models;
 using Microsoft.EntityFrameworkCore;
 using BLL.Services.Bases;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,15 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IService<Author, AuthorModel>, AuthorService>();
 builder.Services.AddScoped<IService<User, UserModel>, UserService>();
 
+//Authentication:
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+{
+    options.LoginPath = "/Users/Login";
+    options.AccessDeniedPath = "/Users/Login";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.SlidingExpiration = true;
+
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -35,6 +45,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+//Authentication:
+app.UseAuthentication();
 
 app.UseAuthorization();
 

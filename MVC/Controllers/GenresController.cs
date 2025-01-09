@@ -5,11 +5,13 @@ using BLL.Services.Bases;
 using BLL.Models;
 using BLL.DAL;
 using BLL.Services;
+using Microsoft.AspNetCore.Authorization;
 
 // Generated from Custom Template.
 
 namespace MVC.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class GenresController : MvcController
     {
         // Service injections:
@@ -32,6 +34,7 @@ namespace MVC.Controllers
         }
 
         // GET: Genres
+        
         public IActionResult Index()
         {
             // Get collection service logic:

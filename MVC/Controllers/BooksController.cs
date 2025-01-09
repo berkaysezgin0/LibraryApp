@@ -5,6 +5,7 @@ using BLL.Services.Bases;
 using BLL.Models;
 using BLL.DAL;
 using BLL.Services;
+using Microsoft.AspNetCore.Authorization;
 
 // Generated from Custom Template.
 
@@ -35,6 +36,7 @@ namespace MVC.Controllers
         }
 
         // GET: Books
+        [AllowAnonymous]
         public IActionResult Index()
         {
             // Get collection service logic:
@@ -60,6 +62,7 @@ namespace MVC.Controllers
         }
 
         // GET: Books/Create
+        [Authorize(Roles ="Admin")]
         public IActionResult Create()
         {
             SetViewData();
@@ -69,6 +72,7 @@ namespace MVC.Controllers
         // POST: Books/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(BookModel book)
         {
             if (ModelState.IsValid)
@@ -87,6 +91,7 @@ namespace MVC.Controllers
         }
 
         // GET: Books/Edit/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int id)
         {
             // Get item to edit service logic:
@@ -98,6 +103,7 @@ namespace MVC.Controllers
         // POST: Books/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(BookModel book)
         {
             if (ModelState.IsValid)
@@ -116,8 +122,11 @@ namespace MVC.Controllers
         }
 
         // GET: Books/Delete/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
+            if (!User.IsInRole("Admin"))
+                return RedirectToAction("Login", "Users");
             // Get item to delete service logic:
             var item = _bookService.Query().SingleOrDefault(q => q.Record.ID == id);
             return View(item);
